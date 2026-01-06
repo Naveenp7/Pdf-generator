@@ -25,4 +25,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     pages: {
         signIn: '/login',
     },
+    secret: process.env.AUTH_SECRET || "dummy_secret_for_dev_env_only_12345",
 });

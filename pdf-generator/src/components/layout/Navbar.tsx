@@ -1,4 +1,8 @@
+import Link from 'next/link';
+import styles from './Navbar.module.css';
+import { Button } from '../ui/Button';
 import { auth, signOut } from '@/auth';
+import { handleSignOut } from '@/app/actions';
 
 export const Navbar = async () => {
     const session = await auth();
@@ -18,10 +22,7 @@ export const Navbar = async () => {
 
             <div className={styles.actions}>
                 {session ? (
-                    <form action={async () => {
-                        "use server";
-                        await signOut();
-                    }}>
+                    <form action={handleSignOut}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                             <span style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{session.user?.name}</span>
                             <Button variant="outline">Sign Out</Button>
