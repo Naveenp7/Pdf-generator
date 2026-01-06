@@ -1,0 +1,128 @@
+.services {
+    padding: 4rem 2rem;
+    margin-top: 2rem;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.badge {
+    background-color: var(--c-neon);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.5rem;
+}
+
+.description {
+    max-width: 600px;
+    font-family: var(--font-body);
+    color: var(--text-secondary);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.card {
+    border: 1px solid var(--c-black);
+    border-radius: var(--radius-lg);
+    padding: 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 5px 0px var(--c-black);
+    min-height: 280px;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 8px 0px var(--c-black);
+}
+
+.cardGreen {
+    background-color: var(--c-neon);
+}
+
+.cardBlack {
+    background-color: var(--c-black);
+    color: var(--c-white);
+}
+
+.cardWhite {
+    background-color: var(--c-gray-100);
+}
+
+.cardContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.cardTitle {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    background-color: var(--c-white);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    align-self: flex-start;
+    color: var(--c-black);
+}
+
+.cardTitleDark {
+    background-color: var(--c-white);
+    color: var(--c-black);
+}
+
+.cardTitleLight {
+    background-color: var(--c-neon);
+}
+
+.linkRow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 500;
+    margin-top: auto;
+    cursor: pointer;
+}
+
+.arrowCircle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--c-black);
+    color: var(--c-neon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transform: rotate(-45deg);
+}
+
+.arrowCircleWhite {
+    background-color: var(--c-white);
+    color: var(--c-black);
+}
+
+.illustration {
+    width: 200px;
+    height: 150px;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
