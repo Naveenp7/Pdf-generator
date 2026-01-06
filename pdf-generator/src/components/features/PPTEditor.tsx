@@ -16,6 +16,9 @@ export const PPTEditor = () => {
         { id: 1, title: 'Title Slide', points: ['Subtitle or introductory text'], notes: '' }
     ]);
     const [activeSlideId, setActiveSlideId] = useState(1);
+    const [topic, setTopic] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [theme, setTheme] = useState('plain');
 
     const activeSlide = slides.find(s => s.id === activeSlideId) || slides[0];
 
@@ -30,7 +33,34 @@ export const PPTEditor = () => {
     };
 
     const handleExport = () => {
-        exportToPPT(slides);
+        exportToPPT(slides, theme);
+    };
+
+    const generateAISlides = async () => {
+        if (!topic.trim()) return alert('Please enter a topic');
+        setIsGenerating(true);
+        try {
+            const res = await fetch('/api/generate-ppt', {
+                method: 'POST',
+                body: JSON.stringify({ topic, slideCount: 5 })
+            });
+            const data = await res.json();
+            if (data.success && data.data.slides) {
+                const newSlides: Slide[] = data.data.slides.map((s: any, i: number) => ({
+                    id: i + 1,
+                    title: s.title,
+                    points: s.content,
+                    notes: s.speakerNotes || ''
+                }));
+                setSlides(newSlides);
+                setActiveSlideId(1);
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Failed to generate slides');
+        } finally {
+            setIsGenerating(false);
+        }
     };
 
     return (
@@ -50,8 +80,31 @@ export const PPTEditor = () => {
             </div>
 
             <div className={styles.editorMain}>
-                <div className={styles.toolbar}>
-                    <Button variant="neon" onClick={handleExport}>Download PPTX</Button>
+                <div className={styles.toolbar} style={{ justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <input
+                            value={topic}
+                            onChange={(e) => setTopic(e.target.value)}
+                            placeholder="Enter a topic (e.g. 'Future of AI')"
+                            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', width: '250px' }}
+                        />
+                        <Button variant="neon" onClick={generateAISlides} disabled={isGenerating}>
+                            {isGenerating ? 'Generating...' : '✨ Generate AI Slides'}
+                        </Button>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <select
+                            value={theme}
+                            onChange={(e) => setTheme(e.target.value)}
+                            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+                        >
+                            <option value="plain">Plain Theme</option>
+                            <option value="corporate">Corporate Blue</option>
+                            <option value="neon">Positivus Neon</option>
+                            <option value="dark">Dark Mode</option>
+                        </select>
+                        <Button variant="outline" onClick={handleExport}>Download PPTX</Button>
+                    </div>
                 </div>
 
                 <div className={styles.slidePreview}>

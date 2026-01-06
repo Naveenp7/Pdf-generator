@@ -1,13 +1,13 @@
 import Groq from "groq-sdk";
 
 const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY || 'dummy_key_for_build',
+  apiKey: process.env.GROQ_API_KEY || 'dummy_key_for_build',
 });
 
 export default groq;
 
 export const generateResumeJSON = async (currentResume: string, jobDescription: string) => {
-    const systemPrompt = `
+  const systemPrompt = `
     You are an expert Resume Writer and Career Coach. 
     Your task is to take a user's current resume (or profile data) and a target job description, 
     and generate a tailored, high-ATS-score resume in structured JSON format.
@@ -32,7 +32,7 @@ export const generateResumeJSON = async (currentResume: string, jobDescription: 
     Do not include markdown formatting like \`\`\`json. Return only the raw JSON string.
   `;
 
-    const userPrompt = `
+  const userPrompt = `
     Current Resume Content:
     ${currentResume}
 
@@ -40,21 +40,65 @@ export const generateResumeJSON = async (currentResume: string, jobDescription: 
     ${jobDescription}
   `;
 
-    try {
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: userPrompt },
-            ],
-            model: "llama-3.3-70b-versatile",
-            temperature: 0.2,
-            response_format: { type: "json_object" },
-        });
+  try {
+    const completion = await groq.chat.completions.create({
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      model: "llama-3.3-70b-versatile",
+      temperature: 0.2,
+      response_format: { type: "json_object" },
+    });
 
-        const content = completion.choices[0]?.message?.content || "{}";
-        return JSON.parse(content);
-    } catch (error) {
-        console.error("Error generating resume:", error);
-        throw new Error("Failed to generate resume JSON");
+    const content = completion.choices[0]?.message?.content || "{}";
+    return JSON.parse(content);
+  } catch (error) {
+    console.error("Error generating resume:", error);
+    throw new Error("Failed to generate resume JSON");
+  }
+};
+
+export const generatePPTJSON = async (topic: string, slideCount: number = 5) => {
+  const systemPrompt = `
+    You are an expert Presentation Designer.
+    Your task is to create a professional presentation outline for the given TOPIC.
+    Generate usually around \${slideCount} slides.
+    
+    Output strictly valid JSON matching this schema:
+    {
+      "slides": [
+        {
+          "title": "Slide Title",
+          "content": ["Bullet point 1", "Bullet point 2", "Bullet point 3"],
+          "speakerNotes": "Notes for the presenter..."
+        }
+      ]
     }
+
+    Do not include markdown formatting like \`\`\`json. Return only the raw JSON string.
+  `;
+
+  const userPrompt = `
+    Topic: ${topic}
+    Slide Count: ${slideCount}
+    `;
+
+  try {
+    const completion = await groq.chat.completions.create({
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      model: "llama-3.3-70b-versatile",
+      temperature: 0.3,
+      response_format: { type: "json_object" },
+    });
+
+    const content = completion.choices[0]?.message?.content || "{}";
+    return JSON.parse(content);
+  } catch (error) {
+    console.error("Error generating PPT:", error);
+    throw new Error("Failed to generate PPT JSON");
+  }
 };

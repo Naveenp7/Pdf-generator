@@ -1,8 +1,8 @@
-import Link from 'next/link';
-import styles from './Navbar.module.css';
-import { Button } from '../ui/Button';
+import { auth, signOut } from '@/auth';
 
-export const Navbar = () => {
+export const Navbar = async () => {
+    const session = await auth();
+
     return (
         <nav className={styles.navbar}>
             <Link href="/" className={styles.logo}>
@@ -17,12 +17,26 @@ export const Navbar = () => {
             </div>
 
             <div className={styles.actions}>
-                <Link href="/login">
-                    <Button variant="secondary">Login</Button>
-                </Link>
-                <Link href="/register">
-                    <Button variant="primary">Sign Up Free</Button>
-                </Link>
+                {session ? (
+                    <form action={async () => {
+                        "use server";
+                        await signOut();
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <span style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{session.user?.name}</span>
+                            <Button variant="outline">Sign Out</Button>
+                        </div>
+                    </form>
+                ) : (
+                    <>
+                        <Link href="/login">
+                            <Button variant="secondary">Login</Button>
+                        </Link>
+                        <Link href="/register">
+                            <Button variant="primary">Sign Up Free</Button>
+                        </Link>
+                    </>
+                )}
             </div>
         </nav>
     );
